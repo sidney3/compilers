@@ -369,6 +369,7 @@ dependencies = [
  "lox_core",
  "lox_derive",
  "ndarray",
+ "nonempty",
  "prettyplease",
  "proc-macro2",
  "quote",

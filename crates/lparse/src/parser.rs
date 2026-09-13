@@ -1,7 +1,9 @@
 use lasso::Rodeo;
 use log::debug;
+use lox_core::Span;
 use lox_core::{InternPool, Ordinal};
 use ndarray::Array2;
+use nonempty::NonEmpty;
 
 use super::action::{Action, make_action};
 use super::debug::DisplayWithGrammarExt;
@@ -22,6 +24,38 @@ pub struct Tree<R: Rule> {
 pub struct Parent<R: Rule> {
   pub rule: R,
   pub children: Vec<Node<R>>,
+  pub span: Span,
+}
+
+impl<R: Rule> Parent<R> {
+  pub fn make_empty(rule: R, start_position: usize) -> Self {
+    Self {
+      rule,
+      children: Vec::new(),
+      span: Span {
+        start: start_position,
+        end: start_position,
+      },
+    }
+  }
+
+  pub fn new(rule: R, children: NonEmpty<Node<R>>) -> Self {
+    let span = match children.tail.as_slice() {
+      [] => children.head.span(),
+      [.., last] => Span {
+        start: children.head.span().start,
+        end: last.span().end,
+      },
+    };
+
+    let children_vec: Vec<_> = children.into_iter().collect();
+
+    Self {
+      rule,
+      children: children_vec,
+      span,
+    }
+  }
 }
 
 #[derive(Debug)]
@@ -34,7 +68,18 @@ impl<R: Rule> Node<R> {
   pub fn symbol(&self) -> Symbol<R> {
     match self {
       Self::Leaf(token) => Symbol::Token(token.token_type),
-      Self::Parent(Parent { rule, children: _ }) => Symbol::Rule(*rule),
+      Self::Parent(Parent {
+        rule,
+        children: _,
+        span: _,
+      }) => Symbol::Rule(*rule),
+    }
+  }
+
+  pub fn span(&self) -> Span {
+    match self {
+      Self::Leaf(token) => token.span,
+      Self::Parent(parent) => parent.span,
     }
   }
 }
@@ -76,6 +121,7 @@ impl<R: Rule> Parser<R> {
 
     loop {
       let next_token = iter.peek().ok_or(Error::IncompleteProgram).cloned()?;
+      let focus = Span::trivial();
 
       debug!(
         "Current state: {}",
@@ -95,7 +141,7 @@ impl<R: Rule> Parser<R> {
             );
             Node::Leaf(*token)
           }
-          None => return Err(Error::ExpectedToken(next_token.span)),
+          None => return Err(Error::ExpectedToken(focus)),
         },
         Action::Reduce(production_id) | Action::Accept(production_id) => {
           let production = self.grammar.production(*production_id);
@@ -104,37 +150,29 @@ impl<R: Rule> Parser<R> {
             debug!("Reduce to {}", production.rule);
           }
 
-          // When we decide to reduce to a production P, this
-          // entails popping off the N nodes from the stack that
-          // its definition entails. Our current state (before
-          // pushing P back into the stack) is then exactly the
-          // state we were in BEFORE we pushed in the first of
-          // these N nodes.
-          //
-          // Therefore, in each stack entry, we stash the state id
-          // that we were in before pushing in that element. So
-          // we just inspect the first of these drained elements
-          // (stack[drain_from]) to figure out what our next state is.
-          if production.is_empty() {
-            Node::Parent(Parent {
-              rule: production.rule,
-              children: vec![],
-            })
-          } else {
-            match stack.len().checked_sub(production.len()) {
-              Some(drain_from) => {
-                curr_state_id = stack[drain_from].0;
+          let drain_start = stack
+            .len()
+            .checked_sub(production.len())
+            .expect("Attempted to drain more stack elements than are complete");
+          let mut drained = stack.drain(drain_start..stack.len());
 
-                Node::Parent(Parent {
-                  rule: production.rule,
-                  children: stack.drain(drain_from..).map(|(_, node)| node).collect(),
-                })
-              }
-              None => {
-                return Err(Error::IncompleteProgram);
-              }
+          let parent = match drained.next() {
+            // Reduce to a non-empty production, our state is restored to what it
+            // was when we reduced to ``head``
+            Some(head) => {
+              curr_state_id = head.0;
+              let elements = NonEmpty {
+                head: head.1,
+                tail: drained.map(|(_, node)| node).collect(),
+              };
+
+              Parent::new(production.rule, elements)
             }
-          }
+            // Reduce to an empty production, our state doesn't change
+            None => Parent::make_empty(production.rule, focus.start),
+          };
+
+          Node::Parent(parent)
         }
       };
 
