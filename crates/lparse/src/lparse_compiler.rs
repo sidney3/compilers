@@ -158,10 +158,13 @@ impl<'ast> Compiler<'ast> {
       lparse::Parent<#rule_type>
     };
 
+    let node_binding = quote! {
+      node
+    };
     let match_branches = rule
       .productions
       .iter()
-      .map(|p| self.production_match_statement(rule, p));
+      .map(|p| self.production_match_statement(rule, p, &node_binding));
 
     quote! {
       fn #func_name(node: &#parent_node) -> #return_type {
@@ -213,6 +216,7 @@ impl<'ast> Compiler<'ast> {
     &self,
     parent_rule: &LRule,
     production: &ProductionDefinition,
+    _node_binding: &TokenStream,
   ) -> TokenStream {
     let rule_type = self.rule_type();
     let rule_name = self.ident_tokens(&parent_rule.name);
