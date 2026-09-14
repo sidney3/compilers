@@ -24,7 +24,7 @@ pub struct Tree<R: Rule> {
 pub struct Parent<R: Rule> {
   pub rule: R,
   pub children: Vec<Node<R>>,
-  pub span: Span,
+  span: Span,
 }
 
 impl<R: Rule> Parent<R> {
@@ -56,6 +56,10 @@ impl<R: Rule> Parent<R> {
       span,
     }
   }
+
+  pub fn span(&self) -> Span {
+    self.span
+  }
 }
 
 #[derive(Debug)]
@@ -79,7 +83,7 @@ impl<R: Rule> Node<R> {
   pub fn span(&self) -> Span {
     match self {
       Self::Leaf(token) => token.span,
-      Self::Parent(parent) => parent.span,
+      Self::Parent(parent) => parent.span(),
     }
   }
 }

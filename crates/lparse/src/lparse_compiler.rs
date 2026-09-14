@@ -167,8 +167,8 @@ impl<'ast> Compiler<'ast> {
       .map(|p| self.production_match_statement(rule, p, &node_binding));
 
     quote! {
-      fn #func_name(node: &#parent_node) -> #return_type {
-        match (&node.rule, node.children.as_slice()) {
+      fn #func_name(#node_binding: &#parent_node) -> #return_type {
+        match (&#node_binding.rule, #node_binding.children.as_slice()) {
           #(#match_branches)*
           _ => panic!("Unreachable"),
         }
@@ -212,11 +212,16 @@ impl<'ast> Compiler<'ast> {
     }
   }
 
+  fn extra_node_bindings(&self, node_binding: &TokenStream) -> TokenStream {
+    quote! {
+      let _span = #node_binding.span();
+    }
+  }
   fn production_match_statement(
     &self,
     parent_rule: &LRule,
     production: &ProductionDefinition,
-    _node_binding: &TokenStream,
+    node_binding: &TokenStream,
   ) -> TokenStream {
     let rule_type = self.rule_type();
     let rule_name = self.ident_tokens(&parent_rule.name);
@@ -289,6 +294,8 @@ impl<'ast> Compiler<'ast> {
       }
     });
 
+    let extra_node_bindings = self.extra_node_bindings(node_binding);
+
     let semantic_action = self
       .try_unwrap_embedded_rust(&production.semantic_action)
       .expect("Invalid semantic action");
@@ -301,6 +308,7 @@ impl<'ast> Compiler<'ast> {
         ],
       ) if true #(&& #node_predicates)* => {
         #(#node_user_bindings)*
+        #extra_node_bindings
         #semantic_action
       },
     }

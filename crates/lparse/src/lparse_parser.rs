@@ -233,6 +233,7 @@ fn __rule_factory_function_l_grammar(node: &lparse::Parent<ParseRule>) -> LGramm
             let goalrule = __rule_factory_function_set_goal_rule(__node_1);
             let tokentype = __rule_factory_function_set_token_type(__node_2);
             let rules = __rule_factory_function_reserved_l_rule_kleene(__node_3);
+            let _span = node.span();
             LGrammar {
                 preamble,
                 goal_rule: goalrule,
@@ -263,6 +264,7 @@ fn __rule_factory_function_bound_leaf(node: &lparse::Parent<ParseRule>) -> Bound
             let _ = __node_2.lexeme;
             let token = __node_3.lexeme;
             let _ = __node_4.lexeme;
+            let _span = node.span();
             BoundLeaf {
                 token: token,
                 bind_to: bind_to,
@@ -291,6 +293,7 @@ fn __rule_factory_function_bound_rule(node: &lparse::Parent<ParseRule>) -> Bound
             let _ = __node_2.lexeme;
             let token = __node_3.lexeme;
             let _ = __node_4.lexeme;
+            let _span = node.span();
             BoundRule {
                 rule: token,
                 bind_to: bind_to,
@@ -324,6 +327,7 @@ fn __rule_factory_function_bound_kleene_rule(
             let token = __node_3.lexeme;
             let _ = __node_4.lexeme;
             let _ = __node_5.lexeme;
+            let _span = node.span();
             BoundRule { rule: token, bind_to }
         }
         _ => panic!("Unreachable"),
@@ -337,6 +341,7 @@ fn __rule_factory_function_l_node(node: &lparse::Parent<ParseRule>) -> LNode {
             ],
         ) if true && __node_0.rule == ParseRule::BoundLeaf => {
             let leaf = __rule_factory_function_bound_leaf(__node_0);
+            let _span = node.span();
             LNode::Leaf(leaf)
         }
         (
@@ -345,6 +350,7 @@ fn __rule_factory_function_l_node(node: &lparse::Parent<ParseRule>) -> LNode {
             ],
         ) if true && __node_0.rule == ParseRule::BoundRule => {
             let rule = __rule_factory_function_bound_rule(__node_0);
+            let _span = node.span();
             LNode::Rule(rule)
         }
         (
@@ -353,6 +359,7 @@ fn __rule_factory_function_l_node(node: &lparse::Parent<ParseRule>) -> LNode {
             ],
         ) if true && __node_0.rule == ParseRule::BoundKleeneRule => {
             let rule = __rule_factory_function_bound_kleene_rule(__node_0);
+            let _span = node.span();
             LNode::Kleene(rule, ())
         }
         _ => panic!("Unreachable"),
@@ -380,6 +387,7 @@ fn __rule_factory_function_production_definition(
             let _ = __node_2.lexeme;
             let semantic_action = __node_3.lexeme;
             let _ = __node_4.lexeme;
+            let _span = node.span();
             ProductionDefinition {
                 definition: definition,
                 semantic_action: semantic_action,
@@ -416,6 +424,7 @@ fn __rule_factory_function_l_rule(node: &lparse::Parent<ParseRule>) -> LRule {
             );
             let _ = __node_5.lexeme;
             let _ = __node_6.lexeme;
+            let _span = node.span();
             LRule {
                 name: name,
                 return_type: Some(return_type),
@@ -442,6 +451,7 @@ fn __rule_factory_function_l_rule(node: &lparse::Parent<ParseRule>) -> LRule {
             );
             let _ = __node_3.lexeme;
             let _ = __node_4.lexeme;
+            let _span = node.span();
             LRule {
                 name: name,
                 return_type: None,
@@ -468,6 +478,7 @@ fn __rule_factory_function_set_goal_rule(node: &lparse::Parent<ParseRule>) -> Id
             let _ = __node_1.lexeme;
             let goalrule = __node_2.lexeme;
             let _ = __node_3.lexeme;
+            let _span = node.span();
             goalrule
         }
         _ => panic!("Unreachable"),
@@ -490,6 +501,7 @@ fn __rule_factory_function_set_token_type(node: &lparse::Parent<ParseRule>) -> I
             let _ = __node_1.lexeme;
             let tokentype = __node_2.lexeme;
             let _ = __node_3.lexeme;
+            let _span = node.span();
             tokentype
         }
         _ => panic!("Unreachable"),
@@ -503,6 +515,7 @@ fn __rule_factory_function_preamble(node: &lparse::Parent<ParseRule>) -> Ident {
             ],
         ) if true && __node_0.token_type == LParseToken::RustImport => {
             let import = __node_0.lexeme;
+            let _span = node.span();
             import
         }
         (
@@ -511,6 +524,7 @@ fn __rule_factory_function_preamble(node: &lparse::Parent<ParseRule>) -> Ident {
             ],
         ) if true && __node_0.token_type == LParseToken::RustDirective => {
             let directive = __node_0.lexeme;
+            let _span = node.span();
             directive
         }
         _ => panic!("Unreachable"),
@@ -520,7 +534,10 @@ fn __rule_factory_function_reserved_l_node_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<LNode> {
     match (&node.rule, node.children.as_slice()) {
-        (ParseRule::ReservedLNodeKleene, []) if true => Vec::new(),
+        (ParseRule::ReservedLNodeKleene, []) if true => {
+            let _span = node.span();
+            Vec::new()
+        }
         (
             ParseRule::ReservedLNodeKleene,
             [lparse::Node::Parent(__node_0),
@@ -530,6 +547,7 @@ fn __rule_factory_function_reserved_l_node_kleene(
             && __node_1.rule == ParseRule::LNode => {
             let first = __rule_factory_function_reserved_l_node_kleene(__node_0);
             let tail = __rule_factory_function_l_node(__node_1);
+            let _span = node.span();
             let mut all = first;
             all.push(tail);
             all
@@ -541,7 +559,10 @@ fn __rule_factory_function_reserved_production_definition_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<ProductionDefinition> {
     match (&node.rule, node.children.as_slice()) {
-        (ParseRule::ReservedProductionDefinitionKleene, []) if true => Vec::new(),
+        (ParseRule::ReservedProductionDefinitionKleene, []) if true => {
+            let _span = node.span();
+            Vec::new()
+        }
         (
             ParseRule::ReservedProductionDefinitionKleene,
             [lparse::Node::Parent(__node_0),
@@ -553,6 +574,7 @@ fn __rule_factory_function_reserved_production_definition_kleene(
                 __node_0,
             );
             let tail = __rule_factory_function_production_definition(__node_1);
+            let _span = node.span();
             let mut all = first;
             all.push(tail);
             all
@@ -564,7 +586,10 @@ fn __rule_factory_function_reserved_preamble_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<Ident> {
     match (&node.rule, node.children.as_slice()) {
-        (ParseRule::ReservedPreambleKleene, []) if true => Vec::new(),
+        (ParseRule::ReservedPreambleKleene, []) if true => {
+            let _span = node.span();
+            Vec::new()
+        }
         (
             ParseRule::ReservedPreambleKleene,
             [lparse::Node::Parent(__node_0),
@@ -574,6 +599,7 @@ fn __rule_factory_function_reserved_preamble_kleene(
             && __node_1.rule == ParseRule::Preamble => {
             let first = __rule_factory_function_reserved_preamble_kleene(__node_0);
             let tail = __rule_factory_function_preamble(__node_1);
+            let _span = node.span();
             let mut all = first;
             all.push(tail);
             all
@@ -585,7 +611,10 @@ fn __rule_factory_function_reserved_l_rule_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<LRule> {
     match (&node.rule, node.children.as_slice()) {
-        (ParseRule::ReservedLRuleKleene, []) if true => Vec::new(),
+        (ParseRule::ReservedLRuleKleene, []) if true => {
+            let _span = node.span();
+            Vec::new()
+        }
         (
             ParseRule::ReservedLRuleKleene,
             [lparse::Node::Parent(__node_0),
@@ -595,6 +624,7 @@ fn __rule_factory_function_reserved_l_rule_kleene(
             && __node_1.rule == ParseRule::LRule => {
             let first = __rule_factory_function_reserved_l_rule_kleene(__node_0);
             let tail = __rule_factory_function_l_rule(__node_1);
+            let _span = node.span();
             let mut all = first;
             all.push(tail);
             all
