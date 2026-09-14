@@ -189,12 +189,6 @@ impl<'a, 'vm> Compiler<'a, 'vm> {
   }
 
   fn method_body(&mut self, body: &Block) {
-    // TODO: shenanagins to bind this/super. im thinking we make
-    // special instructions PUSH_THIS and PUSH_SUPER for the VM,
-    // and then we can just invoke these and bind the names.
-    // Recall: we have a special BoundMethod object that holds
-    // the receiver and the method. It lives at the base of the
-    // function stack.
     let this = self.load_str_sym("this");
     self.func_mut().bind_this(this);
     self.block(body);

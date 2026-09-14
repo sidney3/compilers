@@ -125,7 +125,6 @@ impl Instance {
     sym: Symbol,
     to: Value,
   ) -> std::result::Result<(), RuntimeError> {
-    // TODO: once we make our vtable, this will change to use that.
     if self
       .methods
       .iter()

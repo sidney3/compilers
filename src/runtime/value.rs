@@ -14,10 +14,6 @@ pub enum Value {
   Obj(Handle),
   Bool(Bool),
   Nil,
-  // TODO: useful internally for representing
-  // string keys. Probably annoying because
-  // we need to support implicit conversion.
-  // Int(int64)
 }
 
 impl Trace<ObjData> for Value {
