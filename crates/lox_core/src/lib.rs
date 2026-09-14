@@ -6,4 +6,4 @@ mod span;
 
 pub use intern_pool::InternPool;
 pub use ordinal::Ordinal;
-pub use span::Span;
+pub use span::{Span, Spans};
