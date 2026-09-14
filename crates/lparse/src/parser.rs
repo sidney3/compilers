@@ -21,44 +21,43 @@ pub struct Tree<R: Rule> {
 }
 
 #[derive(Debug)]
+enum NodeChildren<R: Rule> {
+  // TODO: write our own NonEmpty that has
+  // head and tail contiguous (as we need
+  // to represent the span of this).
+  NonTrivial(Vec<Node<R>>),
+
+  // When our node has >= 1 children,
+  // we can infer the span.
+  Trivial(usize),
+}
+
+#[derive(Debug)]
 pub struct Parent<R: Rule> {
   pub rule: R,
-  pub children: Vec<Node<R>>,
-  span: Span,
+  children: NodeChildren<R>,
 }
 
 impl<R: Rule> Parent<R> {
   pub fn make_empty(rule: R, start_position: usize) -> Self {
     Self {
       rule,
-      children: Vec::new(),
-      span: Span {
-        start: start_position,
-        end: start_position,
-      },
+      children: NodeChildren::Trivial(start_position),
+    }
+  }
+
+  pub fn children(&self) -> &[Node<R>] {
+    match &self.children {
+      NodeChildren::NonTrivial(children) => children.as_slice(),
+      NodeChildren::Trivial(_) => &[],
     }
   }
 
   pub fn new(rule: R, children: NonEmpty<Node<R>>) -> Self {
-    let span = match children.tail.as_slice() {
-      [] => children.head.span(),
-      [.., last] => Span {
-        start: children.head.span().start,
-        end: last.span().end,
-      },
-    };
-
-    let children_vec: Vec<_> = children.into_iter().collect();
-
     Self {
       rule,
-      children: children_vec,
-      span,
+      children: NodeChildren::NonTrivial(children.into_iter().collect()),
     }
-  }
-
-  pub fn span(&self) -> Span {
-    self.span
   }
 }
 
