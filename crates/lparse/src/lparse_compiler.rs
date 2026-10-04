@@ -168,7 +168,7 @@ impl<'ast> Compiler<'ast> {
 
     quote! {
       fn #func_name(#node_binding: &#parent_node) -> #return_type {
-        match (&#node_binding.rule, #node_binding.children.as_slice()) {
+        match (&#node_binding.rule, #node_binding.children()) {
           #(#match_branches)*
           _ => panic!("Unreachable"),
         }

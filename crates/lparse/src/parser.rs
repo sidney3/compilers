@@ -22,9 +22,6 @@ pub struct Tree<R: Rule> {
 
 #[derive(Debug)]
 enum NodeChildren<R: Rule> {
-  // TODO: write our own NonEmpty that has
-  // head and tail contiguous (as we need
-  // to represent the span of this).
   NonTrivial(Vec<Node<R>>),
 
   // When our node has >= 1 children,
@@ -59,6 +56,23 @@ impl<R: Rule> Parent<R> {
       children: NodeChildren::NonTrivial(children.into_iter().collect()),
     }
   }
+
+  pub fn span(&self) -> Span {
+    match &self.children {
+      &NodeChildren::Trivial(point) => Span::point(point),
+      // TODO: write our own NonEmpty that has
+      // head and tail contiguous (as we need
+      // to represent the span of this).
+      NodeChildren::NonTrivial(children) => match &children.as_slice() {
+        [single] => single.span(),
+        [first, .., last] => Span {
+          start: first.span().start,
+          end: last.span().end,
+        },
+        [] => panic!("Unreachable"),
+      },
+    }
+  }
 }
 
 #[derive(Debug)]
@@ -71,11 +85,7 @@ impl<R: Rule> Node<R> {
   pub fn symbol(&self) -> Symbol<R> {
     match self {
       Self::Leaf(token) => Symbol::Token(token.token_type),
-      Self::Parent(Parent {
-        rule,
-        children: _,
-        span: _,
-      }) => Symbol::Rule(*rule),
+      Self::Parent(Parent { rule, children: _ }) => Symbol::Rule(*rule),
     }
   }
 

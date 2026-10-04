@@ -217,7 +217,7 @@ fn __make_grammar() -> lparse::Grammar<ParseRule> {
     )
 }
 fn __rule_factory_function_l_grammar(node: &lparse::Parent<ParseRule>) -> LGrammar {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::LGrammar,
             [lparse::Node::Parent(__node_0),
@@ -245,7 +245,7 @@ fn __rule_factory_function_l_grammar(node: &lparse::Parent<ParseRule>) -> LGramm
     }
 }
 fn __rule_factory_function_bound_leaf(node: &lparse::Parent<ParseRule>) -> BoundLeaf {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::BoundLeaf,
             [lparse::Node::Leaf(__node_0),
@@ -274,7 +274,7 @@ fn __rule_factory_function_bound_leaf(node: &lparse::Parent<ParseRule>) -> Bound
     }
 }
 fn __rule_factory_function_bound_rule(node: &lparse::Parent<ParseRule>) -> BoundRule {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::BoundRule,
             [lparse::Node::Leaf(__node_0),
@@ -305,7 +305,7 @@ fn __rule_factory_function_bound_rule(node: &lparse::Parent<ParseRule>) -> Bound
 fn __rule_factory_function_bound_kleene_rule(
     node: &lparse::Parent<ParseRule>,
 ) -> BoundRule {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::BoundKleeneRule,
             [lparse::Node::Leaf(__node_0),
@@ -334,7 +334,7 @@ fn __rule_factory_function_bound_kleene_rule(
     }
 }
 fn __rule_factory_function_l_node(node: &lparse::Parent<ParseRule>) -> LNode {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::LNode,
             [lparse::Node::Parent(__node_0),
@@ -368,7 +368,7 @@ fn __rule_factory_function_l_node(node: &lparse::Parent<ParseRule>) -> LNode {
 fn __rule_factory_function_production_definition(
     node: &lparse::Parent<ParseRule>,
 ) -> ProductionDefinition {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::ProductionDefinition,
             [lparse::Node::Parent(__node_0),
@@ -397,7 +397,7 @@ fn __rule_factory_function_production_definition(
     }
 }
 fn __rule_factory_function_l_rule(node: &lparse::Parent<ParseRule>) -> LRule {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::LRule,
             [lparse::Node::Leaf(__node_0),
@@ -462,7 +462,7 @@ fn __rule_factory_function_l_rule(node: &lparse::Parent<ParseRule>) -> LRule {
     }
 }
 fn __rule_factory_function_set_goal_rule(node: &lparse::Parent<ParseRule>) -> Ident {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::SetGoalRule,
             [lparse::Node::Leaf(__node_0),
@@ -485,7 +485,7 @@ fn __rule_factory_function_set_goal_rule(node: &lparse::Parent<ParseRule>) -> Id
     }
 }
 fn __rule_factory_function_set_token_type(node: &lparse::Parent<ParseRule>) -> Ident {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::SetTokenType,
             [lparse::Node::Leaf(__node_0),
@@ -508,7 +508,7 @@ fn __rule_factory_function_set_token_type(node: &lparse::Parent<ParseRule>) -> I
     }
 }
 fn __rule_factory_function_preamble(node: &lparse::Parent<ParseRule>) -> Ident {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (
             ParseRule::Preamble,
             [lparse::Node::Leaf(__node_0),
@@ -533,7 +533,7 @@ fn __rule_factory_function_preamble(node: &lparse::Parent<ParseRule>) -> Ident {
 fn __rule_factory_function_reserved_l_node_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<LNode> {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (ParseRule::ReservedLNodeKleene, []) if true => {
             let _span = node.span();
             Vec::new()
@@ -558,7 +558,7 @@ fn __rule_factory_function_reserved_l_node_kleene(
 fn __rule_factory_function_reserved_production_definition_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<ProductionDefinition> {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (ParseRule::ReservedProductionDefinitionKleene, []) if true => {
             let _span = node.span();
             Vec::new()
@@ -585,7 +585,7 @@ fn __rule_factory_function_reserved_production_definition_kleene(
 fn __rule_factory_function_reserved_preamble_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<Ident> {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (ParseRule::ReservedPreambleKleene, []) if true => {
             let _span = node.span();
             Vec::new()
@@ -610,7 +610,7 @@ fn __rule_factory_function_reserved_preamble_kleene(
 fn __rule_factory_function_reserved_l_rule_kleene(
     node: &lparse::Parent<ParseRule>,
 ) -> Vec<LRule> {
-    match (&node.rule, node.children.as_slice()) {
+    match (&node.rule, node.children()) {
         (ParseRule::ReservedLRuleKleene, []) if true => {
             let _span = node.span();
             Vec::new()

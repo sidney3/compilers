@@ -20,6 +20,10 @@ impl Span {
     Span::new(0, 0)
   }
 
+  pub fn point(start: usize) -> Self {
+    Self { start, end: start }
+  }
+
   pub fn combine_overlapping(self, other: Span) -> Option<Self> {
     let (earlier, later) = if self.start <= other.start {
       (self, other)
